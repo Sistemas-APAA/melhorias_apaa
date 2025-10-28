@@ -1,0 +1,34 @@
+/**
+ * @NApiVersion 2.1
+ * @NScriptType ClientScript
+ */
+define(['N/search', 'N/ui/dialog'], (search, dialog) => {
+    function pageInit(context) {
+        try {
+            // ID da Saved Search "Meus Contratos"
+            const savedSearchId = 'customsearch3658'; // Substitua pelo ID correto
+
+            // URL da busca salva no NetSuite
+            const savedSearchUrl = `/app/common/search/searchresults.nl?searchid=${savedSearchId}`;
+
+            // Executa a busca salva
+            var searchResult = search.load({ id: savedSearchId }).run().getRange({ start: 0, end: 1 });
+
+            // Se houver contratos, exibir pop-up com link
+            if (searchResult.length > 0) {
+                dialog.create({
+                    title: "Contratos Pendentes",
+                    message: "Você tem contratos para análise.",
+                    buttons: [
+                        { label: "Ver Contratos", function: () => window.open(savedSearchUrl, '_blank') },
+                        { label: "Fechar", function: () => {} }
+                    ]
+                });
+            }
+        } catch (error) {
+            console.error("Erro ao carregar a busca salva:", error);
+        }
+    }
+
+    return { pageInit };
+});
